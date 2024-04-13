@@ -18,6 +18,7 @@ namespace DoAnTotNghiep_Test_Website.TestCase
         public LoginPage() { }
         public void Login(string url,string _email, string _password) 
         {
+            Step = Test.CreateNode("Login");
             GoToUrl(url);
             Write(email, _email);
             Write(password, _password);

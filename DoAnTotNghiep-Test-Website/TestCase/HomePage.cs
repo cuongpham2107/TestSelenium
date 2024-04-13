@@ -14,6 +14,7 @@ namespace DoAnTotNghiep_Test_Website.TestCase
         public HomePage() { }
         public void GotoHomePage(string url) 
         {
+            Step = Test.CreateNode("Home Page");
             GoToUrl(url);
             Click(logo);
         }

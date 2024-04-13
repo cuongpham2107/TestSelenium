@@ -14,22 +14,9 @@ namespace DoAnTotNghiep_Test_Website.TestCase
         public CategoryPage() { }
         public void ChooseCategory( string url)
         {
+            Step = Test.CreateNode("Category Page");
             GoToUrl(url);
-            try
-            {
-                long windowHeight = (long)((IJavaScriptExecutor)driver).ExecuteScript("return window.innerHeight;");
-                long documentHeight = (long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.scrollHeight;");
-
-                long scrollDistance = documentHeight / 7;
-
-                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                js.ExecuteScript("window.scrollTo(0, arguments[0]);", scrollDistance);
-                System.Threading.Thread.Sleep(2000);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+            Scroll(7);
             Click(category);
             System.Threading.Thread.Sleep(2000);
         }

@@ -14,21 +14,8 @@ namespace DoAnTotNghiep_Test_Website.TestCase
         public AddToCartInProductPage() { }
         public void AddToCartInProduct()
         {
-            try
-            {
-                long windowHeight = (long)((IJavaScriptExecutor)driver).ExecuteScript("return window.innerHeight;");
-                long documentHeight = (long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.scrollHeight;");
-
-                long scrollDistance = documentHeight / 8;
-
-                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                js.ExecuteScript("window.scrollTo(0, arguments[0]);", scrollDistance);
-                System.Threading.Thread.Sleep(2000);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+            Step = Test.CreateNode("Add to Cart in Product");
+            Scroll(8);
             Click(addToCartInProduct);
             System.Threading.Thread.Sleep(2000);
         }

@@ -5,12 +5,44 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System.Xml.Serialization;
+using AventStack.ExtentReports;
+using AventStack.ExtentReports.Reporter;
 
 namespace DoAnTotNghiep_Test_Website
 {
     [TestClass]
     public class TestExecution
     {
+
+        public TestContext instance;
+        public TestContext TestContext
+        {
+            get { return instance; }
+            set { instance = value; }
+        }
+        [AssemblyInitialize()]
+        public static void AssemblyInit(TestContext context)
+        {
+            string resultFile = Path.Combine(Environment.CurrentDirectory, DateTime.Now.ToString("yyyyMMddHHmmss") + ".html");
+            CorePage.CreateReport(resultFile);
+        }
+        [AssemblyCleanup()]
+        public static void AssemblyCleanup()
+        {
+            CorePage.extentReports.Flush();
+        }
+        [TestInitialize()]
+        public void TestInit()
+        {
+          
+            CorePage.Test = CorePage.extentReports.CreateTest(TestContext.TestName);
+        }
+        [TestCleanup()]
+        public void TestCleanUp()
+        {
+           
+        }
+
         private readonly string baseUrl = "http://127.0.0.1:8000";
         HomePage homePage = new HomePage();
         RegisterPage registerPage = new RegisterPage();
@@ -20,12 +52,15 @@ namespace DoAnTotNghiep_Test_Website
         AddToCartPage addToCartPage = new AddToCartPage();
         AddToCartInProductPage addToCartInProductPage = new AddToCartInProductPage();
         RemoveItemInCartPage removeItemInCartPage = new RemoveItemInCartPage();
+        AddAddressOrderPage addAddressOrderPage = new AddAddressOrderPage();
+        PaymentOrderPage paymentOrderPage = new PaymentOrderPage();
+        ContactPage contactPage = new ContactPage();
         #region Check Home Page
         /// <summary>
         /// Check Home Page
         /// </summary>
         [TestMethod]
-        public void CheckHomePage_TC001()
+        public void TC001_CheckHomePage()
         {
             CorePage.SeleniumInit();
             homePage.GotoHomePage(baseUrl);
@@ -38,14 +73,14 @@ namespace DoAnTotNghiep_Test_Website
         /// Register
         /// </summary>
         [TestMethod]
-        public void Registration_Success_TC001()
+        public void TC002_Registration_Success()
         {
             CorePage.SeleniumInit();
             registerPage.Register($"{baseUrl}/register", "Van", "Van123@gmail.com", "VanNgocNghech123");
             CorePage.driver.Close();
         }
         [TestMethod]
-        public void Registration_Fail_TC002()
+        public void TC003_Registration_Fail()
         {
             CorePage.SeleniumInit();
             registerPage.Register($"{baseUrl}/register", "Van", "Van123@gmail.com", "VanNgocNghech123");
@@ -61,7 +96,7 @@ namespace DoAnTotNghiep_Test_Website
         /// Login success
         /// </summary>
         [TestMethod]
-        public void Login_Success_TC001()
+        public void TC004_Login_Success()
         {
             CorePage.SeleniumInit();
             loginPage.Login($"{baseUrl}/login", "Van123@gmail.com", "VanNgocNghech123");
@@ -74,7 +109,7 @@ namespace DoAnTotNghiep_Test_Website
         /// Username fail
         /// </summary>
         [TestMethod]
-        public void Login_Fail_Username_TC002()
+        public void TC004_Login_Fail_Username()
         {
             CorePage.SeleniumInit();
             loginPage.Login($"{baseUrl}/login", "Van124@gmail.com", "VanNgocNghech123");
@@ -87,7 +122,7 @@ namespace DoAnTotNghiep_Test_Website
         /// Password Fail
         /// </summary>
         [TestMethod]
-        public void Login_Fail_Password_TC003()
+        public void TC005_Login_Fail_Password()
         {
             CorePage.SeleniumInit();
             loginPage.Login($"{baseUrl}/login", "Van123@gmail.com", "VanNgocNghech");
@@ -100,7 +135,7 @@ namespace DoAnTotNghiep_Test_Website
         #region Select Category
 
         [TestMethod]
-        public void Select_Category_TC001()
+        public void TC006_Select_Category()
         {
             CorePage.SeleniumInit(); 
             categoryPage.ChooseCategory($"{baseUrl}");
@@ -111,7 +146,7 @@ namespace DoAnTotNghiep_Test_Website
         #region Select Product
 
         [TestMethod]
-        public void Select_Product_TC001()
+        public void TC007_Select_Product()
         {
             CorePage.SeleniumInit();
             productPage.ChooseProduct($"{baseUrl}");
@@ -120,7 +155,7 @@ namespace DoAnTotNghiep_Test_Website
         #endregion
         #region Product Add To Card
         [TestMethod]
-        public void Select_Product_Add_To_Card_TC001()
+        public void TC008_Select_Product_Add_To_Card()
         {
             CorePage.SeleniumInit();
             loginPage.Login($"{baseUrl}/login", "Van123@gmail.com", "VanNgocNghech123");
@@ -130,7 +165,7 @@ namespace DoAnTotNghiep_Test_Website
         #endregion
         #region Product Add To Card In Product Page
         [TestMethod]
-        public void Select_Product_Add_To_Card_In_Product_Page_TC001()
+        public void TC009_Select_Product_Add_To_Card_In_Product_Page()
         {
             CorePage.SeleniumInit();
             loginPage.Login($"{baseUrl}/login", "Van123@gmail.com", "VanNgocNghech123");
@@ -141,14 +176,52 @@ namespace DoAnTotNghiep_Test_Website
         #endregion
         #region Remove Item Proudct Card
         [TestMethod]
-        public void Remove_Item_Product_Card_TC001()
+        public void TC010_Remove_Item_Product_Card()
         {
             CorePage.SeleniumInit();
             loginPage.Login($"{baseUrl}/login", "Van123@gmail.com", "VanNgocNghech123");
-            removeItemInCartPage.RemoveItemInCart();
+            productPage.ChooseProduct($"{baseUrl}");
+            addToCartInProductPage.AddToCartInProduct();
+            removeItemInCartPage.RemoveItemInCart($"{baseUrl}/check-out");
             CorePage.CloseSelenium();
         }
         #endregion
-
+        #region Add Address in Order
+        [TestMethod]
+        public void TC011_Add_Address_In_Order()
+        {
+            CorePage.SeleniumInit();
+            loginPage.Login($"{baseUrl}/login", "Van123@gmail.com", "VanNgocNghech123");
+            productPage.ChooseProduct($"{baseUrl}");
+            addToCartInProductPage.AddToCartInProduct();
+            CorePage.driver.Url = $"{baseUrl}/check-out";
+            addAddressOrderPage.ClickCheckOut();
+            addAddressOrderPage.AddAddress();
+            CorePage.CloseSelenium();
+        }
+        #endregion
+        #region Payment in Order
+        [TestMethod]
+        public void TC012_Payment_In_Order()
+        {
+            CorePage.SeleniumInit();
+            loginPage.Login($"{baseUrl}/login", "Van123@gmail.com", "VanNgocNghech123");
+            productPage.ChooseProduct($"{baseUrl}");
+            addToCartInProductPage.AddToCartInProduct();
+            CorePage.driver.Url = $"{baseUrl}/check-out";
+            addAddressOrderPage.ClickCheckOut();
+            paymentOrderPage.PaymentOrder();
+            CorePage.CloseSelenium();
+        }
+        #endregion
+        #region Contact
+        [TestMethod]
+        public void TC013_SendContact()
+        {
+            CorePage.SeleniumInit();
+            contactPage.Contact($"{baseUrl}/contact");
+            CorePage.CloseSelenium();
+        }
+        #endregion
     }
 }

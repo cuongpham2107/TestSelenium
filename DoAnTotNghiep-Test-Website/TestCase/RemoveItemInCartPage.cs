@@ -10,12 +10,14 @@ namespace DoAnTotNghiep_Test_Website.TestCase
 {
     public class RemoveItemInCartPage : CorePage
     {
-        By iconCart = By.ClassName("my-cart");
+        By iconRemoveCart = By.XPath("/html/body/section[3]/div/div[1]/div/div/table/tbody/tr[1]/td[5]/div[1]");
         public RemoveItemInCartPage() { }
-        public void RemoveItemInCart()
+        public void RemoveItemInCart(string url)
         {
-            Click(iconCart);
-            Thread.Sleep(5000);
+            Step = Test.CreateNode("Remove Item Cart");
+            GoToUrl(url);
+            Click(iconRemoveCart);
+            Thread.Sleep(2000);
         }
     }
 }

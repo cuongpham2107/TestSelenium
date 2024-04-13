@@ -18,6 +18,7 @@ namespace DoAnTotNghiep_Test_Website.TestCase
         public RegisterPage() { }
         public void Register(string url, string _name, string _email, string _password)
         {
+            Step = Test.CreateNode("Register");
             GoToUrl(url);
             Write(name, _name);
             Write(email, _email);
